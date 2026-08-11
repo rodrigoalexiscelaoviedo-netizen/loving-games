@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useGameStore } from '../store/gameStore';
-import { getRandomGame, getCategories, getGamesByCategory } from '../games/gameDatabase';
+import { getRandomGame, getGamesByCategory } from '../games/gameDatabase';
 import { getPlayedGameIds } from '../lib/supabase';
 
 export function Home() {

@@ -3,7 +3,7 @@ import type { Game, Intensity } from '../games/gameDatabase';
 interface GameCardProps {
   game: Game;
   intensity: Intensity | null;
-  content: string;
+  content: string | undefined;
 }
 
 export function GameCard({ game, intensity, content }: GameCardProps) {

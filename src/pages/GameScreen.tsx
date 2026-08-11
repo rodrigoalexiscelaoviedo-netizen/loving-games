@@ -5,7 +5,6 @@ import { IntensitySelector } from '../components/IntensitySelector';
 import { GameCard } from '../components/GameCard';
 import { Celebration } from '../components/Celebration';
 import { saveGameSession } from '../lib/supabase';
-import type { Intensity } from '../games/gameDatabase';
 
 export function GameScreen() {
   const navigate = useNavigate();
