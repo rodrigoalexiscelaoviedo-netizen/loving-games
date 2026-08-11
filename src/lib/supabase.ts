@@ -3,13 +3,22 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase credentials in .env.local');
-}
+const supabase = (supabaseUrl && supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export async function saveGameSession(
+  gameId: string,
+  category: string,
+  intensity: string,
+  title: string,
+  completed: boolean
+) {
+  if (!supabase) {
+    console.warn('Supabase not configured — game not saved');
+    return null;
+  }
 
-export async function saveGameSession(gameId: string, category: string, intensity: string, title: string, completed: boolean) {
   const { data, error } = await supabase
     .from('game_sessions')
     .insert([{
@@ -29,9 +38,12 @@ export async function saveGameSession(gameId: string, category: string, intensit
 }
 
 export async function getGameHistory(limit: number = 10) {
+  if (!supabase) return [];
+
   const { data, error } = await supabase
     .from('game_sessions')
     .select('*')
+    .eq('completed', true)
     .order('created_at', { ascending: false })
     .limit(limit);
 
@@ -42,7 +54,9 @@ export async function getGameHistory(limit: number = 10) {
   return data || [];
 }
 
-export async function getPlayedGameIds() {
+export async function getPlayedGameIds(): Promise<string[]> {
+  if (!supabase) return [];
+
   const { data, error } = await supabase
     .from('game_sessions')
     .select('game_id')

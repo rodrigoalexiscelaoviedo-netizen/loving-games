@@ -1,120 +1,108 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useGameStore } from '../store/gameStore';
 import { IntensitySelector } from '../components/IntensitySelector';
 import { GameCard } from '../components/GameCard';
 import { Celebration } from '../components/Celebration';
 import { saveGameSession } from '../lib/supabase';
+import { getRandomGame } from '../games/gameDatabase';
+import type { Intensity } from '../games/gameDatabase';
 
 export function GameScreen() {
   const navigate = useNavigate();
-  const { currentGame, selectedIntensity, setSelectedIntensity, addPlayedGame } = useGameStore();
+  const { currentGame, selectedIntensity, setSelectedIntensity, setCurrentGame, addPlayedGame, playedGameIds, reset } = useGameStore();
   const [showCelebration, setShowCelebration] = useState(false);
 
-  if (!currentGame) {
-    return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <p className="text-light">Cargando...</p>
-      </div>
-    );
-  }
+  const handleComplete = useCallback(async () => {
+    if (!currentGame || !selectedIntensity) return;
 
-  const gameContent = currentGame.intensities[selectedIntensity || 'suave'];
+    try {
+      await saveGameSession(
+        currentGame.id,
+        currentGame.category,
+        selectedIntensity,
+        currentGame.title,
+        true
+      );
+    } catch (e) {
+      console.warn('Could not save to Supabase');
+    }
 
-  const handleComplete = async () => {
-    if (!selectedIntensity) return;
-
-    await saveGameSession(
-      currentGame.id,
-      currentGame.category,
-      selectedIntensity,
-      currentGame.title,
-      true
-    );
     addPlayedGame(currentGame.id);
     setShowCelebration(true);
-  };
+  }, [currentGame, selectedIntensity, addPlayedGame]);
 
-  const handleNext = () => {
-    navigate({ to: '/' });
-  };
+  const handleNext = useCallback(() => {
+    const game = getRandomGame(playedGameIds);
+    setCurrentGame(game);
+  }, [playedGameIds, setCurrentGame]);
 
-  const handleSkip = () => {
+  const handleCelebrationComplete = useCallback(() => {
+    setShowCelebration(false);
+    reset();
     navigate({ to: '/' });
-  };
+  }, [navigate, reset]);
+
+  if (!currentGame) {
+    navigate({ to: '/' });
+    return null;
+  }
 
   return (
-    <div className="min-h-screen bg-dark text-light flex flex-col items-center justify-center p-4">
-      <button
-        onClick={handleSkip}
-        className="absolute top-4 left-4 text-light/60 hover:text-light text-2xl"
-      >
-        ←
-      </button>
+    <div className="min-h-screen min-h-[100dvh] bg-[#0F0F1E] text-[#E0E0E0] flex flex-col items-center px-4 py-6">
 
-      <div className="mb-6">
-        <span className="text-xs font-semibold text-gold uppercase tracking-wider">
-          {currentGame.category}
-        </span>
+      {/* Header */}
+      <div className="w-full max-w-lg flex items-center mb-8">
+        <button
+          onClick={() => { reset(); navigate({ to: '/' }); }}
+          className="text-[#E0E0E0]/50 hover:text-white text-xl p-2"
+        >
+          ← Volver
+        </button>
       </div>
 
-      <div className="mb-10 w-full max-w-2xl">
-        <GameCard
-          game={currentGame}
-          intensity={selectedIntensity}
-          content={gameContent}
+      {/* Game Card */}
+      <div className="w-full max-w-lg mb-8">
+        <GameCard game={currentGame} intensity={selectedIntensity} />
+      </div>
+
+      {/* Intensity Selector */}
+      <div className="w-full max-w-lg mb-8">
+        <IntensitySelector
+          selected={selectedIntensity}
+          onSelect={(i: Intensity) => setSelectedIntensity(i)}
+          availableIntensities={currentGame.intensities}
         />
       </div>
 
-      {!selectedIntensity && (
-        <div className="mb-10 w-full">
-          <p className="text-center text-light/70 mb-6">Elegí nivel de intensidad</p>
-          <IntensitySelector
-            selected={selectedIntensity}
-            onSelect={(intensity) => setSelectedIntensity(intensity)}
-          />
-        </div>
-      )}
-
+      {/* Action buttons */}
       {selectedIntensity && (
-        <div className="flex gap-4 max-w-sm w-full">
+        <div className="flex flex-col gap-3 w-full max-w-sm">
           <button
             onClick={handleComplete}
-            className="
-              flex-1 bg-coral hover:bg-coral/90 text-white
-              font-semibold py-3 rounded-lg transition-all
-            "
+            className="w-full bg-[#FF6B6B] hover:bg-[#FF6B6B]/90 text-white font-bold py-4 rounded-xl text-lg shadow-lg shadow-[#FF6B6B]/20"
           >
             ✓ Listo, lo hicimos
           </button>
-          <button
-            onClick={handleNext}
-            className="
-              flex-1 bg-mint hover:bg-mint/90 text-dark
-              font-semibold py-3 rounded-lg transition-all
-            "
-          >
-            → Siguiente
-          </button>
-          <button
-            onClick={() => {/* TODO: guardar para después */}}
-            className="
-              flex-1 bg-gold hover:bg-gold/90 text-dark
-              font-semibold py-3 rounded-lg transition-all
-            "
-          >
-            ♡ Guardar
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleNext}
+              className="flex-1 bg-[#00D4AA] hover:bg-[#00D4AA]/90 text-[#0F0F1E] font-bold py-3 rounded-xl"
+            >
+              → Otro juego
+            </button>
+            <button
+              onClick={() => { reset(); navigate({ to: '/' }); }}
+              className="flex-1 bg-[#2A2A3E] hover:bg-[#3A3A4E] text-[#E0E0E0] font-bold py-3 rounded-xl"
+            >
+              🏠 Inicio
+            </button>
+          </div>
         </div>
       )}
 
-      <Celebration
-        show={showCelebration}
-        onComplete={() => {
-          setShowCelebration(false);
-          navigate({ to: '/' });
-        }}
-      />
+      {/* Celebration */}
+      <Celebration show={showCelebration} onComplete={handleCelebrationComplete} />
     </div>
   );
 }

@@ -4,21 +4,37 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html, body, #root {
   width: 100%;
-  height: 100%;
-  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #0F0F1E;
   color: #E0E0E0;
+  overflow-x: hidden;
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+/* Smooth transitions */
+button {
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.animate-bounce {
-  animation: bounce 1s infinite;
+button:active {
+  transform: scale(0.95);
+}
+
+/* Scrollbar minimal */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2A3E;
+  border-radius: 4px;
 }

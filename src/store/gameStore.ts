@@ -4,33 +4,33 @@ import type { Game, Intensity } from '../games/gameDatabase';
 interface GameState {
   currentGame: Game | null;
   selectedIntensity: Intensity | null;
-  gameContent: string;
   playedGameIds: string[];
+  showCelebration: boolean;
 
   setCurrentGame: (game: Game | null) => void;
   setSelectedIntensity: (intensity: Intensity) => void;
-  setGameContent: (content: string) => void;
   addPlayedGame: (gameId: string) => void;
   setPlayedGameIds: (ids: string[]) => void;
+  setShowCelebration: (show: boolean) => void;
   reset: () => void;
 }
 
 export const useGameStore = create<GameState>((set) => ({
   currentGame: null,
   selectedIntensity: null,
-  gameContent: '',
   playedGameIds: [],
+  showCelebration: false,
 
-  setCurrentGame: (game) => set({ currentGame: game }),
+  setCurrentGame: (game) => set({ currentGame: game, selectedIntensity: null }),
   setSelectedIntensity: (intensity) => set({ selectedIntensity: intensity }),
-  setGameContent: (content) => set({ gameContent: content }),
   addPlayedGame: (gameId) => set((state) => ({
     playedGameIds: [...state.playedGameIds, gameId],
   })),
   setPlayedGameIds: (ids) => set({ playedGameIds: ids }),
+  setShowCelebration: (show) => set({ showCelebration: show }),
   reset: () => set({
     currentGame: null,
     selectedIntensity: null,
-    gameContent: '',
+    showCelebration: false,
   }),
 }));
