@@ -8,7 +8,7 @@ interface GameState {
   showCelebration: boolean;
 
   setCurrentGame: (game: Game | null) => void;
-  setSelectedIntensity: (intensity: Intensity) => void;
+  setSelectedIntensity: (intensity: Intensity | null) => void;
   addPlayedGame: (gameId: string) => void;
   setPlayedGameIds: (ids: string[]) => void;
   setShowCelebration: (show: boolean) => void;
