@@ -1,12 +1,13 @@
 export type Intensity = 'suave' | 'medio' | 'intenso';
-export type GameCategory = 'preguntas' | 'retos' | 'roleplay' | 'sorpresas';
+export type GameCategory = 'preguntas' | 'retos' | 'roleplay' | 'sorpresas' | 'colors-hinting';
+export type ColorTheme = 'colores' | 'naturaleza' | 'urbano' | 'retro' | 'emociones';
 
 export interface Game {
   id: string;
   category: GameCategory;
   title: string;
   emoji: string;
-  intensities: {
+  intensities?: {
     suave: string;
     medio?: string;
     intenso?: string;
@@ -15,12 +16,52 @@ export interface Game {
   tags?: string[];
 }
 
+export interface ColorHintGame extends Game {
+  category: 'colors-hinting';
+  theme: ColorTheme;
+  difficulty: Intensity;
+  items: string[];
+  gameTime: number;
+}
+
 export const CATEGORY_INFO: Record<GameCategory, { emoji: string; label: string; description: string; color: string }> = {
   preguntas: { emoji: '💭', label: 'Preguntas', description: 'Descubranse de nuevo', color: '#A78BFA' },
   retos: { emoji: '💪', label: 'Retos', description: 'Desafíos para dos', color: '#F472B6' },
   roleplay: { emoji: '🎭', label: 'Roleplay', description: 'Jueguen a ser otros', color: '#34D399' },
   sorpresas: { emoji: '🎲', label: 'Sorpresas', description: 'Dejense llevar', color: '#FBBF24' },
+  'colors-hinting': { emoji: '🎨', label: 'Colors Hinting', description: 'Busquen colores', color: '#EC4899' },
 };
+
+// Colors Hinting juegos
+const COLOR_HINTING_GAMES: ColorHintGame[] = [
+  // COLORES
+  { id: 'ch-col-f1', category: 'colors-hinting', theme: 'colores', difficulty: 'suave', title: 'Colores Básicos', emoji: '🎨', items: ['Algo rojo', 'Algo azul', 'Algo amarillo', 'Algo verde', 'Algo negro', 'Algo blanco'], gameTime: 15, tags: ['colores', 'fácil'] },
+  { id: 'ch-col-m1', category: 'colors-hinting', theme: 'colores', difficulty: 'medio', title: 'Colores Pastel', emoji: '🎨', items: ['Algo naranja', 'Algo rosa', 'Algo morado', 'Algo gris', 'Algo marrón', 'Algo turquesa'], gameTime: 20, tags: ['colores', 'medio'] },
+  { id: 'ch-col-h1', category: 'colors-hinting', theme: 'colores', difficulty: 'intenso', title: 'Colores Metálicos', emoji: '🎨', items: ['Algo dorado/oro', 'Algo plateado', 'Algo magenta', 'Algo holográfico', 'Algo fluorescente', 'Algo transparente'], gameTime: 30, tags: ['colores', 'intenso'] },
+  // NATURALEZA
+  { id: 'ch-nat-f1', category: 'colors-hinting', theme: 'naturaleza', difficulty: 'suave', title: 'Elementos Naturales', emoji: '🌿', items: ['Hoja verde', 'Flor cualquier color', 'Árbol', 'Piedra', 'Agua', 'Animal o insecto'], gameTime: 20, tags: ['naturaleza', 'fácil'] },
+  { id: 'ch-nat-m1', category: 'colors-hinting', theme: 'naturaleza', difficulty: 'medio', title: 'Texturas Naturales', emoji: '🌿', items: ['Musgo o liquen', 'Corteza con patrón', 'Flor silvestre', 'Semilla o fruto', 'Nube interesante', 'Reflejo en agua'], gameTime: 25, tags: ['naturaleza', 'medio'] },
+  { id: 'ch-nat-h1', category: 'colors-hinting', theme: 'naturaleza', difficulty: 'intenso', title: 'Riqueza Natural', emoji: '🌿', items: ['Seta o hongo', 'Telaraña con rocío', 'Patrón fractal natural', 'Animal camuflado', 'Planta rara', 'Arco iris'], gameTime: 30, tags: ['naturaleza', 'intenso'] },
+  // URBANO
+  { id: 'ch-urb-f1', category: 'colors-hinting', theme: 'urbano', difficulty: 'suave', title: 'Elementos Urbanos', emoji: '🏙️', items: ['Señal de tránsito', 'Puerta', 'Ventana', 'Graffiti', 'Cartel', 'Banco público'], gameTime: 20, tags: ['urbano', 'fácil'] },
+  { id: 'ch-urb-m1', category: 'colors-hinting', theme: 'urbano', difficulty: 'medio', title: 'Arte Urbano', emoji: '🏙️', items: ['Arte callejero/mural', 'Reflejo interesante', 'Sombra patterned', 'Objeto abandonado', 'Arquitectura antigua', 'Escalera'], gameTime: 25, tags: ['urbano', 'medio'] },
+  { id: 'ch-urb-h1', category: 'colors-hinting', theme: 'urbano', difficulty: 'intenso', title: 'Perspectiva Urbana', emoji: '🏙️', items: ['Código QR creativo', 'Simetría perfecta', 'Perspectiva engañosa', 'Objeto camuflado', 'Detalle raro', 'Contraste extremo'], gameTime: 30, tags: ['urbano', 'intenso'] },
+  // RETRO
+  { id: 'ch-ret-f1', category: 'colors-hinting', theme: 'retro', difficulty: 'suave', title: 'Viajes al Pasado', emoji: '📼', items: ['Objeto 80s', 'Objeto 90s', 'Cartel antiguo', 'Ropa vintage', 'Auto clásico', 'Teléfono público'], gameTime: 20, tags: ['retro', 'fácil'] },
+  { id: 'ch-ret-m1', category: 'colors-hinting', theme: 'retro', difficulty: 'medio', title: 'Nostalgia Pura', emoji: '📼', items: ['Publicidad old school', 'Moda vintage', 'Electrodoméstico antiguo', 'Moneda/billete viejo', 'Película antigua', 'Neon sign'], gameTime: 25, tags: ['retro', 'medio'] },
+  { id: 'ch-ret-h1', category: 'colors-hinting', theme: 'retro', difficulty: 'intenso', title: 'Arqueología Moderna', emoji: '📼', items: ['Objeto década específica', 'Marca desaparecida', 'Estética VHS', 'Catálogo antiguo', 'Tech obsoleta', 'Moda micro-generación'], gameTime: 30, tags: ['retro', 'intenso'] },
+  // EMOCIONES
+  { id: 'ch-emo-f1', category: 'colors-hinting', theme: 'emociones', difficulty: 'suave', title: 'Sensaciones Básicas', emoji: '💫', items: ['Algo que transmita alegría', 'Algo que transmita calma', 'Algo que transmita energía', 'Algo que transmita tristeza', 'Algo que transmita misterio', 'Algo que transmita esperanza'], gameTime: 20, tags: ['emociones', 'fácil'] },
+  { id: 'ch-emo-m1', category: 'colors-hinting', theme: 'emociones', difficulty: 'medio', title: 'Sentimientos Profundos', emoji: '💫', items: ['Algo que transmita nostalgia', 'Algo que transmita vulnerabilidad', 'Algo que transmita poder', 'Algo que transmita libertad', 'Algo que transmita amor', 'Algo que transmita transformación'], gameTime: 25, tags: ['emociones', 'medio'] },
+  { id: 'ch-emo-h1', category: 'colors-hinting', theme: 'emociones', difficulty: 'intenso', title: 'Emociones Complejas', emoji: '💫', items: ['Algo ambiguo emocionalmente', 'Conexión humana', 'Incomodidad/inquietud', 'Redención', 'Lo efímero', 'Contradicción'], gameTime: 30, tags: ['emociones', 'intenso'] },
+  // SORPRESAS (random)
+  { id: 'ch-rnd-1', category: 'colors-hinting', theme: 'colores', difficulty: 'suave', title: 'Búsqueda Sorpresa 1', emoji: '🎲', items: ['Algo azul', 'Algo que brille', 'Algo suave', 'Algo que huela bien', 'Algo antiguo', 'Algo vivo'], gameTime: 15, tags: ['random'] },
+  { id: 'ch-rnd-2', category: 'colors-hinting', theme: 'naturaleza', difficulty: 'medio', title: 'Búsqueda Sorpresa 2', emoji: '🎲', items: ['Algo que crezca', 'Algo con patrón', 'Algo pequeño', 'Algo que se mueva', 'Algo mojado', 'Algo que pique'], gameTime: 25, tags: ['random'] },
+  { id: 'ch-rnd-3', category: 'colors-hinting', theme: 'urbano', difficulty: 'medio', title: 'Búsqueda Sorpresa 3', emoji: '🎲', items: ['Algo industrial', 'Algo escrito', 'Algo roto', 'Algo que se repita', 'Algo sucio', 'Algo que rueda'], gameTime: 25, tags: ['random'] },
+  { id: 'ch-rnd-4', category: 'colors-hinting', theme: 'retro', difficulty: 'suave', title: 'Búsqueda Sorpresa 4', emoji: '🎲', items: ['Algo que haya sido útil', 'Algo gastado', 'Algo de marca conocida', 'Algo que se enchufaba', 'Algo que sonaba', 'Algo que se apretaba'], gameTime: 20, tags: ['random'] },
+  { id: 'ch-rnd-5', category: 'colors-hinting', theme: 'emociones', difficulty: 'intenso', title: 'Búsqueda Sorpresa 5', emoji: '🎲', items: ['Belleza inesperada', 'Fealdad atractiva', 'Soledad acompañada', 'Caos ordenado', 'Muerte viviente', 'Verdad incómoda'], gameTime: 30, tags: ['random'] },
+  { id: 'ch-rnd-6', category: 'colors-hinting', theme: 'colores', difficulty: 'intenso', title: 'Búsqueda Sorpresa 6', emoji: '🎲', items: ['Toda la gama', 'Monocromo', 'Contraste máximo', 'Armonía inesperada', 'Camuflaje', 'Iridiscencia'], gameTime: 30, tags: ['random'] },
+];
 
 export const GAMES: Game[] = [
   // ============ PREGUNTAS ============
@@ -228,6 +269,8 @@ export const GAMES: Game[] = [
     },
     tags: ['creatividad', 'anticipación'],
   },
+
+  ...COLOR_HINTING_GAMES,
 ];
 
 export function getRandomGame(excludeIds: string[] = []): Game {

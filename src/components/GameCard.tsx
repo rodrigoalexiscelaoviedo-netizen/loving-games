@@ -7,7 +7,7 @@ interface Props {
 }
 
 export function GameCard({ game, intensity }: Props) {
-  const content = intensity ? game.intensities[intensity] : null;
+  const content = intensity && game.intensities ? game.intensities[intensity] : null;
   const categoryInfo = CATEGORY_INFO[game.category];
 
   return (
